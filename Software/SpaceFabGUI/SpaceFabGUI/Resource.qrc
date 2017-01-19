@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file>circle-512.gif</file>
+        <file>red_circle.png</file>
+        <file>question-mark_318-52837.jpg</file>
+        <file>Square_red.png</file>
+        <file>Square_green.png</file>
+        <file>Information.svg</file>
+        <file>product-SMALL-geo-pmac.jpg</file>
+    </qresource>
+</RCC>
