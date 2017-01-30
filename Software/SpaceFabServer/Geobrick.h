@@ -15,6 +15,14 @@
 /**
 * @file Geobrick.h
 * @author Daniele Berto
+* @details This object manages the interaction between the SpaceFabServer
+* and the two GeoBricks. I have to underline that the interaction operates
+* with a TCP/IP communication. The protocol is described in the document
+* Software Doku Spacefab_1_96.pdf .
+* 
+* N.B. In this project it is used the word "GeoBrick" both to indicate
+* the elettronic module of the SpaceFab and the software object GeoBrick
+* who manages the interaction with it. 
 */
 
 #include "DefineGeneral.h"
@@ -25,24 +33,31 @@ using namespace std;
 
 typedef struct tagEthernetCmd
 {
-  u_int8_t   RequestType;
-  u_int8_t   Request;
-  u_int16_t  wValue;
-  u_int16_t  wIndex;
-  u_int16_t  wLength;
-  u_int8_t   bData[GEOBRICKSOCKETLIMIT];
+	u_int8_t   RequestType;
+	u_int8_t   Request;
+	u_int16_t  wValue;
+	u_int16_t  wIndex;
+	u_int16_t  wLength;
+	u_int8_t   bData[GEOBRICKSOCKETLIMIT];
 } ETHERNETCMD,*PETHERNETCMD;
 
 class Geobrick
 {
 private:
 
+	//The program have to manage two GeoBrick. The geobrick_number
+	//variable records the number of the GeoBrick managed by the current
+	//object.
 	int geobrick_number;
 
+	//This variable records the sock_id used to communicate with the GeoBrick.
 	int geobrick_sock_id;
 
+	//This variable records the status of the connection with the GeoBrick.
 	int status;
 
+	//This variable records the ip of the physical GeoBrick that communicates
+	//with the current GeoBrick object.
 	std::string ip;
 
 	int port;

@@ -34,75 +34,75 @@ using namespace std;
 
 Geobrick::Geobrick (std::string ip, int port, int geobrick_number)
 {
-Geobrick::ip = ip;
-Geobrick::port = port;
+	Geobrick::ip = ip;
+	Geobrick::port = port;
 
-Geobrick::geobrick_number = geobrick_number;
+	Geobrick::geobrick_number = geobrick_number;
 
-geobrick_sock_id = -1;
-status = -1;
+	geobrick_sock_id = -1;
+	status = -1;
 
-EthCmd.RequestType = VR_DOWNLOAD;
-EthCmd.Request     = VR_PMAC_GETRESPONSE;
-EthCmd.wValue      = 0;
-EthCmd.wIndex      = 0;
+	EthCmd.RequestType = VR_DOWNLOAD;
+	EthCmd.Request     = VR_PMAC_GETRESPONSE;
+	EthCmd.wValue      = 0;
+	EthCmd.wIndex      = 0;
 
-int i = 0;
+	int i = 0;
 
-for ( i = 0; i < GEOBRICKSOCKETLIMIT; i++)
-	EthCmd.bData[i] = 0;
+	for ( i = 0; i < GEOBRICKSOCKETLIMIT; i++)
+		EthCmd.bData[i] = 0;
 
-response = " ";
+	response = " ";
 }
 
 int Geobrick::Connect ()
 {
 	
-  if (status == 0)	
-    shutdown (geobrick_sock_id,SHUT_RDWR);
-	
-  //The OutputModule object sends the input to the user who has sent the command.
-  OutputModule *output_module;
-  output_module = OutputModule::Instance ();	  
+	if (status == 0)	
+	shutdown (geobrick_sock_id,SHUT_RDWR);
+
+	//The OutputModule object sends the input to the user who has sent the command.
+	OutputModule *output_module;
+	output_module = OutputModule::Instance ();	  
 	  
-  int result,sock,length;
-  //struct sockaddr_in client;
-  struct sockaddr_in client;
+	int result,sock,length;
+	//struct sockaddr_in client;
+	struct sockaddr_in client;
 
-  //printf("PMAC Ethernet communication test\n");
+	//printf("PMAC Ethernet communication test\n");
 
-  sock = socket (PF_INET,SOCK_STREAM, 0);
-  client.sin_addr.s_addr = inet_addr(ip.c_str());
-  client.sin_family = PF_INET;
-  client.sin_port = htons(port);
-  length = sizeof(client);
-  
-  output_module->Output("Connection attempt..."); 
-  
-  //~ fcntl(sock, F_SETFL, O_NONBLOCK); //This is an aspect of socket programming that I have never considered before now.
+	sock = socket (PF_INET,SOCK_STREAM, 0);
+	client.sin_addr.s_addr = inet_addr(ip.c_str());
+	client.sin_family = PF_INET;
+	client.sin_port = htons(port);
+	length = sizeof(client);
+
+	output_module->Output("Connection attempt..."); 
+
+	//~ fcntl(sock, F_SETFL, O_NONBLOCK); //This is an aspect of socket programming that I have never considered before now.
 									//~ //Moreover, fcntl manipulates the file descriptor, it is not a function strictly
 									//~ //binded to the network programming
-  
-  result = connect (sock,(__CONST_SOCKADDR_ARG)&client, (socklen_t)length);
 
-  //if 
-  
-  //perror("");
+	result = connect (sock,(__CONST_SOCKADDR_ARG)&client, (socklen_t)length);
 
-  if(result == 0)
-  {
+	//if 
+
+	//perror("");
+
+	if(result == 0)
+	{
 	output_module->Output("Connection okay to GeoBrick " + to_string(geobrick_number) + " !\n");  
-    geobrick_sock_id = sock; 
+	geobrick_sock_id = sock; 
 	status = 0;
-  }
-  else
-  {
+	}
+	else
+	{
 	output_module->Output("Connection failed to GeoBrick " + to_string(geobrick_number) + " !\n");	  
-    geobrick_sock_id = -1;
-    status = -1;
-  }
+	geobrick_sock_id = -1;
+	status = -1;
+	}
 
-  return result;
+	return result;
 
 }
 
@@ -116,56 +116,56 @@ int Geobrick::Disconnect()
 int Geobrick::Send(std::string message)
 {
 	
-  //The OutputModule object sends the input to the user who has sent the command.
-  OutputModule *output_module;
-  output_module = OutputModule::Instance ();	
-	
-  int length_to_send;	
-  
-  char cResponse[STANDARDBUFFERLIMIT]; //It's too much hard coded...
-  
-  bzero(cResponse, STANDARDBUFFERLIMIT);
-  
-  int i = 0;
+	//The OutputModule object sends the input to the user who has sent the command.
+	OutputModule *output_module;
+	output_module = OutputModule::Instance ();	
 
-  for ( i = 0; i < GEOBRICKSOCKETLIMIT; i++)
+	int length_to_send;	
+
+	char cResponse[STANDARDBUFFERLIMIT]; //It's too much hard coded...
+
+	bzero(cResponse, STANDARDBUFFERLIMIT);
+
+	int i = 0;
+
+	for ( i = 0; i < GEOBRICKSOCKETLIMIT; i++)
 		EthCmd.bData[i] = 0;  
-  
-  length_to_send = message.size();
-  
-  if (length_to_send > STANDARDBUFFERLIMIT)
+
+	length_to_send = message.size();
+
+	if (length_to_send > STANDARDBUFFERLIMIT)
 	length_to_send = STANDARDBUFFERLIMIT;
-  else if (length_to_send < 0)
-    length_to_send = 0;
-  
-  EthCmd.wLength = htons((u_int16_t)length_to_send);
-  strncpy((char*)&EthCmd.bData[0],message.c_str(),length_to_send);
+	else if (length_to_send < 0)
+	length_to_send = 0;
 
-  //printf("Attempting Get Response\n");
-  send(geobrick_sock_id,(char*)&EthCmd,ETHERNETCMDSIZE + length_to_send, MSG_NOSIGNAL);
-  //send(geobrick_sock_id,"pippo",ETHERNETCMDSIZE + length_to_send, MSG_NOSIGNAL);
-  recv(geobrick_sock_id,cResponse,STANDARDBUFFERLIMIT,MSG_NOSIGNAL); //It's too much hard coded...
-  
-  string str_tmp(cResponse);
-  
-  response = str_tmp;
-  
-  return 0;
-  //printf(" %s:%s \n",cCommand,cResponse);
+	EthCmd.wLength = htons((u_int16_t)length_to_send);
+	strncpy((char*)&EthCmd.bData[0],message.c_str(),length_to_send);
 
-  //printf("Done \n");	
-	
-  //send(sock,&EthCmd,ETHERNETCMDSIZE + strlen(cCommand),MSG_NOSIGNAL);
-  //recv(sock,cResponse,1400,0);
+	//printf("Attempting Get Response\n");
+	send(geobrick_sock_id,(char*)&EthCmd,ETHERNETCMDSIZE + length_to_send, MSG_NOSIGNAL);
+	//send(geobrick_sock_id,"pippo",ETHERNETCMDSIZE + length_to_send, MSG_NOSIGNAL);
+	recv(geobrick_sock_id,cResponse,STANDARDBUFFERLIMIT,MSG_NOSIGNAL); //It's too much hard coded...
+
+	string str_tmp(cResponse);
+
+	response = str_tmp;
+
+	return 0;
+	//printf(" %s:%s \n",cCommand,cResponse);
+
+	//printf("Done \n");	
+
+	//send(sock,&EthCmd,ETHERNETCMDSIZE + strlen(cCommand),MSG_NOSIGNAL);
+	//recv(sock,cResponse,1400,0);
 
 }
 
 string Geobrick::RetrieveMessage()
 {
-  if (status == -1)
-     //response = "Error: server disconnected\n";
-     response = "Server Offline\n";	
-  return response;	
+	if (status == -1)
+	 //response = "Error: server disconnected\n";
+	 response = "Server Offline\n";	
+	return response;	
 }
 
 string Geobrick::RetrieveCommonVariable()
