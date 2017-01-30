@@ -25,7 +25,7 @@
 #include <ctype.h>
 
 /*
-Implementazione standard dei metodi per implementare il singleton design pattern
+Standard implementation of the singleton design pattern
 */
 ApplicationSetup *
   ApplicationSetup::application_setup_pInstance = NULL;
@@ -39,8 +39,6 @@ ApplicationSetup::Instance ()
   return application_setup_pInstance;
 }
 
-
-///Il costruttore (privato) del singleton riempie le varibili contenenti i path dei files usati dal programma e la modalita' di input con valori di default.
 ApplicationSetup::ApplicationSetup ()
 {
   application_setup_input_mode = (const char *) malloc ((strlen (INPUTMODALITY) + 1));

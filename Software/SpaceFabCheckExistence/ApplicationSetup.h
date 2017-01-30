@@ -46,6 +46,7 @@ public:
 
   /**
    * @brief The application_setup_input_mode variable contains the input mode (as it is inserted with -m flag).
+   * Not used in this program.
    */
   const char *application_setup_input_mode;
 
@@ -55,7 +56,7 @@ public:
   int input_mode;
 
   /**
-   * @brief The FetchInputMode method picks up the input mode from argv and puts it in input_mode variable.
+   * @brief The FetchInputMode method picks up the input mode from argv and puts it in input_mode variable. Not used in this program.
    * @details This method is called by application_setup_set method.
    * @return void
    */
