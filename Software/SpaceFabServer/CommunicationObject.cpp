@@ -40,7 +40,8 @@
 
 using namespace std;
 
-
+//This method is used to split the input received by the TCP/IP in client in
+//odd commands (they are separated by '\n') in order to read them one by one.
 std::vector<std::string> explode(std::string const & s, char delim)
 {
     std::vector<std::string> result;

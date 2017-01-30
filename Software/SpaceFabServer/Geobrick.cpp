@@ -32,7 +32,6 @@
 
 using namespace std;
 
-///Il costruttore (privato) del singleton riempie le varibili contenenti i path dei files usati dal programma e la modalita' di input con valori di default.
 Geobrick::Geobrick (std::string ip, int port, int geobrick_number)
 {
 Geobrick::ip = ip;

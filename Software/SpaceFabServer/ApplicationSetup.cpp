@@ -25,7 +25,7 @@
 #include <ctype.h>
 
 /*
-Implementazione standard dei metodi per implementare il singleton design pattern
+Standard implementation of the singleton design pattern
 */
 ApplicationSetup *
   ApplicationSetup::application_setup_pInstance = NULL;
@@ -40,7 +40,14 @@ ApplicationSetup::Instance ()
 }
 
 
-///Il costruttore (privato) del singleton riempie le varibili contenenti i path dei files usati dal programma e la modalita' di input con valori di default.
+//The private constructor of the ApplicationSetup singleton fills the variable application_setup_input_mode
+//with the input modality contained in INPUTMODALITY.
+//INPUTMODALITY is defined in DefineGeneral.h and defines the method for fetching input.
+//Available option are:
+//tcp, that allows the input only via tcp/ip
+//all, that allows the input either via tcp/ip and via stdin
+//user, that allows the input only via stdin.
+//If the option type is not recognized, all modality is actived.
 ApplicationSetup::ApplicationSetup ()
 {
   application_setup_input_mode = (const char *) malloc ((strlen (INPUTMODALITY) + 1));
